@@ -2,7 +2,8 @@ name: Check PRs
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, edited]
+    branches: [ master, dev ]
+    types: [ opened, reopened, synchronize, edited ]
 
 permissions:
   issues: write
