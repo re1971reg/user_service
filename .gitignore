@@ -28,3 +28,6 @@ replay_pid*
 *.iml
 out
 gen
+
+/build/
+/.gradle/
