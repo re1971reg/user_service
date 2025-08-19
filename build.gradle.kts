@@ -5,6 +5,7 @@ plugins {
     //id("org.jsonschema2pojo") version "1.2.1"
     kotlin("jvm")
     id("checkstyle")
+    id("jacoco")
 }
 
 group = "faang.school"
@@ -85,6 +86,7 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
 }
 
 val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true }
@@ -107,13 +109,55 @@ tasks.checkstyleMain {
     source = fileTree("${project.rootDir}/src/main/java")
     include("**/*.java")
     exclude("**/resources/**")
-
     classpath = files()
 }
 
 tasks.checkstyleTest {
     source = fileTree("${project.rootDir}/src/test")
     include("**/*.java")
-
     classpath = files()
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // Сначала тесты, потом отчёт
+    reports {
+        xml.required.set(false)
+        csv.required.set(false)
+        html.required.set(true)
+    }
+    classDirectories.setFrom(files(classDirectories.files.map {
+        fileTree(it) {
+            exclude(
+                //"school/faang/user_service/UserServiceApplication*",
+                //"school/faang/user_service/client/*",
+                //"school/faang/user_service/config/*",
+                //"school/faang/user_service/mapper/*",
+                //"school/faang/user_service/entity/*",
+                //"school/faang/user_service/dto/*",
+                //"school/faang/user_service/controller/*",
+                //"school/faang/user_service/repository/*",
+                //"school/faang/user_service/exception/*",
+                //"school/faang/user_service/rest/*",
+                "com/json/student/*"
+            )
+        }
+    }))
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)  // Сначала отчёт, потом проверка
+    violationRules {
+        rule {
+            element = "CLASS"
+            excludes = listOf(
+                "school.faang.user_service.*",
+                "com.json.student.*"
+            )
+            limit {
+                counter = "LINE" // Только покрытие строк
+                value = "COVEREDRATIO" // Отношение покрытых строк к общему числу
+                minimum = "0.8".toBigDecimal()  // Теперь требует 80%!
+            }
+        }
+    }
 }
