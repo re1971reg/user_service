@@ -52,6 +52,11 @@ public class ExceptionApiHandler {
         return getErrorResponse("handleUnrecognizedPropertyException", e);
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handlerRuntimeException(ForbiddenException e) {
+        return getErrorResponse("handlerRuntimeException", e);
+    }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)

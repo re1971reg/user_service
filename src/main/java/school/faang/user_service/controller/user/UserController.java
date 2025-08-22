@@ -1,10 +1,9 @@
 package school.faang.user_service.controller.user;
 
-// import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,16 +25,11 @@ public class UserController {
     private final UserService userService;
     private final SkillService skillService;
 
+    @Operation(summary = "Получить навыки пользователя", description = "Запрос возвращает все навыки пользователя")
     @GetMapping("/{userId}/skills")
     public List<SkillDto> getUserSkills(@PathVariable Long userId) {
         return skillService.getUserSkills(userId);
     }
-
-    // @Operation(summary = "check working", description = "check working user controller")
-    // @GetMapping("/check")
-    // public Integer checkController() {
-    //     return 1;
-    // }
 
     public UserDto create(CreateUserDto userDto) {
         validateString(userDto.username(), "username");
