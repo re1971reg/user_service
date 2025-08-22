@@ -123,6 +123,11 @@ tasks.checkstyleTest {
     classpath = files()
 }
 
+jacoco {
+    toolVersion = "0.8.13"
+    reportsDirectory = layout.buildDirectory.dir("$buildDir/reports/jacoco")
+}
+
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // Сначала тесты, потом отчёт
     reports {
