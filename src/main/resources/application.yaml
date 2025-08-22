@@ -40,3 +40,10 @@ user:
   password:
     min:
       length: 6
+
+# swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
