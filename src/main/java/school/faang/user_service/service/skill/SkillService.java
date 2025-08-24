@@ -36,4 +36,12 @@ public interface SkillService {
      * @return - массив предложенных навыков
      */
     List<SkillCandidateDto> getOfferedSkills(long userId);
+
+
+    /**
+     * Метод для приобретения предложенных навыков
+     * @param skillId - идентификатор навыка
+     * @param userId - идентификатор пользователя
+     */
+    // void acquireSkillFromOffers(long skillId, long userId);
 }

@@ -1,6 +1,8 @@
 package school.faang.user_service.exception;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,17 +27,32 @@ public class ExceptionApiHandler {
 
     private final Utils utils;
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerConstraintViolationException(
+        ConstraintViolationException e
+    ) {
+        final Map<String, String> detail = e.getConstraintViolations().stream()
+            .collect(Collectors.toMap(
+                violation -> violation.getPropertyPath().toString(),
+                ConstraintViolation::getMessage
+            ));
+        String errorMessage = utils.format("Validation failed with {} errors",
+            e.getConstraintViolations().size());
+        return getErrorResponse("handlerConstraintViolationException", errorMessage, detail, e);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        Map<String, String> detail = e.getBindingResult()
+        final Map<String, String> detail = e.getBindingResult()
             .getFieldErrors()
             .stream()
             .collect(Collectors.toMap(
                 FieldError::getField,
                 error -> Objects.requireNonNullElse(error.getDefaultMessage(), "")
             ));
-        String errorMessage = utils.format("Validation failed with {} errors",
+        final String errorMessage = utils.format("Validation failed with {} errors",
             e.getBindingResult().getFieldErrors().size());
         return getErrorResponse("handlerMethodArgumentNotValidException", errorMessage, detail, e);
     }

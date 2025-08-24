@@ -1,6 +1,7 @@
 package school.faang.user_service.service.skill;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import school.faang.user_service.repository.user.SkillRepository;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SkillServiceImpl implements SkillService {
@@ -35,6 +37,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillDto create(SkillDto skillDto) {
+        log.debug("service request to save skill : {}", skillDto);
         if (skillRepository.existsByTitleIgnoreCase(skillDto.getTitle())) {
             String message = messageSource.getMessage(
                 SKILL_EXISTS, new Object[]{skillDto.getTitle()}, LocaleContextHolder.getLocale());

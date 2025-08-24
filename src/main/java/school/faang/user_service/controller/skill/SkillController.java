@@ -1,8 +1,11 @@
 package school.faang.user_service.controller.skill;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,31 +18,38 @@ import org.springframework.web.bind.annotation.RestController;
 import school.faang.user_service.dto.skill.SkillCandidateDto;
 import school.faang.user_service.dto.skill.SkillDto;
 import school.faang.user_service.service.skill.SkillService;
-import school.faang.user_service.validator.group.CreateDto;
+import school.faang.user_service.validator.Marker;
 
 import java.util.List;
 
-@Tag(name = "Skill controller API", description = "API for skill controller")
+@Slf4j
+@Tag(name = "Навыки", description = "Операции с навыками")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/skill")
+@Validated
 public class SkillController {
 
     private final SkillService skillService;
 
     @Operation(
-        summary = "Get the user's suggested skills",
-        description = "The request provides a list of suggested user skills"
+        summary = "Список предложенных навыков пользователя"
     )
     @GetMapping("/offered")
-    public List<SkillCandidateDto> getOfferedSkills(@RequestHeader(name = "x-user-id") long userId) {
+    public List<SkillCandidateDto> getOfferedSkills(
+        @Parameter(name = "Идентификатор пользователя")
+        @RequestHeader(name = "x-user-id")
+        long userId
+    ) {
         return skillService.getOfferedSkills(userId);
     }
 
-    @Operation(summary = "Create new skill", description = "Request to create new skill")
+    @Operation(summary = "Создание нового навыка")
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public SkillDto create(@RequestBody @Validated(CreateDto.class) SkillDto skillDto) {
+    @Validated(Marker.OnCreate.class)
+    public SkillDto create(@RequestBody @Valid SkillDto skillDto) {
+        log.debug("REST request to save skill : {}", skillDto);
         return skillService.create(skillDto);
     }
 }
