@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -51,5 +52,16 @@ public class SkillController {
     public SkillDto create(@RequestBody @Valid SkillDto skillDto) {
         log.debug("REST request to save skill : {}", skillDto);
         return skillService.create(skillDto);
+    }
+
+    @Operation(summary = "Приобретение предложенного навыка")
+    @GetMapping("/{skillId}/acquire/{userId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SkillDto acquireSkillFromOffers(
+        @PathVariable("skillId") long skillId,
+        @PathVariable("userId") long userId
+    ) {
+        log.debug("REST acquire skill from offers. skillId: {}, userId: {}", skillId, userId);
+        return skillService.acquireSkillFromOffers(skillId, userId);
     }
 }

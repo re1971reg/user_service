@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import school.faang.user_service.dto.skill.SkillCandidateDto;
 import school.faang.user_service.dto.skill.SkillDto;
 import school.faang.user_service.entity.user.Skill;
+import school.faang.user_service.exception.EntityExistsException;
+import school.faang.user_service.exception.EntityNotFoundException;
 import school.faang.user_service.exception.ForbiddenException;
 import school.faang.user_service.mapper.SkillMapper;
 import school.faang.user_service.repository.recommendation.SkillOfferRepository;
@@ -77,5 +79,33 @@ public class SkillServiceImpl implements SkillService {
                 return new SkillCandidateDto(skillMapper.toSkillDto(skill), offersAmount);
             })
             .toList();
+    }
+
+    @Override
+    public SkillDto acquireSkillFromOffers(long skillId, long userId) {
+        /* todo:
+         *  - проверить, что текущего навыка у пользователя ещё нет
+         *  - пользователь может присвоить навык себе, если другие пользователи порекомендовали ему этот
+         *    навык не менее трех раз
+         *  - всех пользователей, которые являлись авторами рекомендаций из каждого объекта offer,
+         *    назначить гарантами навыка пользователя */
+        // проверить наличие пользователя в БД
+
+        // проверить наличие навыка в БД
+        Skill skillInDb = skillRepository.getByIdOrThrow(skillId);
+
+
+        // проверить, что текущего навыка у пользователя ещё нет
+        skillRepository.findUserSkill(skillId, userId)
+            .ifPresent(skill -> {
+                throw new EntityExistsException(String.format("The user already has the skill %d", skillId));
+            });
+
+        // пользователь может присвоить навык себе, если другие пользователи порекомендовали ему этот
+        // навык не менее трех раз
+
+        // всех пользователей, которые являлись авторами рекомендаций из каждого объекта offer,
+        // назначить гарантами навыка пользователя
+        return new SkillDto();
     }
 }
