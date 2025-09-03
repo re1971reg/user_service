@@ -3,6 +3,7 @@ package school.faang.user_service.service.user;
 import school.faang.user_service.dto.user.CreateUserDto;
 import school.faang.user_service.dto.user.UpdateUserDto;
 import school.faang.user_service.dto.user.UserDto;
+import school.faang.user_service.entity.user.User;
 
 /**
  * Сервис для управления пользователями.
@@ -39,22 +40,37 @@ public interface UserService {
      *         иначе выбрасывается {@code DataIntegrityViolationException}.</li>
      * </ul>
      *
-     * @param userId идентификатор пользователя, чьи данные необходимо обновить
+     * @param userId  идентификатор пользователя, чьи данные необходимо обновить
      * @param userDto объект {@link UpdateUserDto}, содержащий обновлённые данные пользователя
      * @return объект {@link UserDto}, представляющий обновлённого пользователя
      */
-    UserDto update(long userId, UpdateUserDto userDto);
+    UserDto update(Long userId, UpdateUserDto userDto);
 
     /**
-     * Возвращает информацию о пользователе по его идентификатору.
+     * Возвращает UserDto по его идентификатору.
      * <p>
      * Если пользователь с указанным идентификатором не найден,
      * выбрасывается {@code EntityNotFoundException}.
      *
-     * @param userId идентификатор пользователя
+     * @param userId - идентификатор пользователя
      * @return объект {@link UserDto}, содержащий данные пользователя
      */
-    UserDto getById(long userId);
+    UserDto getById(Long userId);
+
+    /**
+     * Возвращает User по его идентификатору
+     *
+     * @param userId - идентификатор пользователя
+     * @return {@link UserDto} данные о пользователе
+     */
+    User getByIdOrThrow(Long userId);
+
+    /**
+     * Проверка, что текущий пользователь является владельцем профиля
+     *
+     * @param userId - идентификатор пользователя
+     */
+    void verifyUserIsProfileOwner(Long userId);
 }
 
 

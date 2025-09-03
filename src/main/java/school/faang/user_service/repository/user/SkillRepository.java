@@ -4,13 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import school.faang.user_service.entity.user.Skill;
+import school.faang.user_service.exception.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    boolean existsByTitle(String title);
+    boolean existsByTitleIgnoreCase(String title);
 
     @Query(nativeQuery = true, value = "SELECT COUNT(id) FROM skill WHERE id IN (?1)")
     int countExisting(List<Long> ids);
@@ -46,4 +47,10 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
             WHERE gs.goal_id = ?1)
             """)
     List<Skill> findSkillsByGoalId(long goalId);
+
+    default Skill getByIdOrThrow(long skillId) {
+        return findById(skillId)
+            .orElseThrow(() -> new EntityNotFoundException(String.format("Skill %d not found", skillId)));
+    }
+
 }

@@ -56,8 +56,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
-
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0")
 
     /**
@@ -78,8 +76,9 @@ dependencies {
 
     /**
      * swagger
+     * пример настройки https://struchkov.dev/blog/ru/api-swagger/#настраиваем-swagger
      */
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 }
 
 //jsonSchema2Pojo {
@@ -121,6 +120,11 @@ tasks.checkstyleTest {
     source = fileTree("${project.rootDir}/src/test")
     include("**/*.java")
     classpath = files()
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+    reportsDirectory = layout.buildDirectory.dir("$buildDir/reports/jacoco")
 }
 
 tasks.jacocoTestReport {
