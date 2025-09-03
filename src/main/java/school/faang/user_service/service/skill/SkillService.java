@@ -1,6 +1,5 @@
 package school.faang.user_service.service.skill;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import school.faang.user_service.dto.skill.SkillCandidateDto;
 import school.faang.user_service.dto.skill.SkillDto;
 
@@ -36,7 +35,7 @@ public interface SkillService {
      * @param userId - идентификатор пользователя
      * @return - массив предложенных навыков
      */
-    List<SkillCandidateDto> getOfferedSkills(long userId);
+    List<SkillCandidateDto> getOfferedSkills(Long userId);
 
 
     /**

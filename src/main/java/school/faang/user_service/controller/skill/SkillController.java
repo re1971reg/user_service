@@ -37,10 +37,11 @@ public class SkillController {
         summary = "Список предложенных навыков пользователя"
     )
     @GetMapping("/offered")
+    @ResponseStatus(HttpStatus.OK)
     public List<SkillCandidateDto> getOfferedSkills(
         @Parameter(name = "Идентификатор пользователя")
         @RequestHeader(name = "x-user-id")
-        long userId
+        Long userId
     ) {
         return skillService.getOfferedSkills(userId);
     }
@@ -55,11 +56,13 @@ public class SkillController {
     }
 
     @Operation(summary = "Приобретение предложенного навыка")
-    @GetMapping("/{skillId}/acquire/{userId}")
+    @GetMapping("/{skillId}/acquire")
     @ResponseStatus(HttpStatus.CREATED)
     public SkillDto acquireSkillFromOffers(
-        @PathVariable("skillId") long skillId,
-        @PathVariable("userId") long userId
+        @Parameter(description = "Идентификатор навыка")
+        @PathVariable("skillId") Long skillId,
+        @Parameter(description = "Идентификатор пользователя")
+        @RequestHeader(name = "x-user-id") Long userId
     ) {
         log.debug("REST acquire skill from offers. skillId: {}, userId: {}", skillId, userId);
         return skillService.acquireSkillFromOffers(skillId, userId);

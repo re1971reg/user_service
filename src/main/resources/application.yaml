@@ -38,8 +38,11 @@ payment-service:
 
 user:
   password:
-    min:
-      length: 6
+    min-length: 6
+
+skill:
+  offer:
+    min: 3
 
 # swagger
 springdoc:
@@ -47,3 +50,5 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+application:

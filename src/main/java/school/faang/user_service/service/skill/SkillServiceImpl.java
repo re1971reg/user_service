@@ -2,19 +2,20 @@ package school.faang.user_service.service.skill;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.faang.user_service.dto.skill.SkillCandidateDto;
 import school.faang.user_service.dto.skill.SkillDto;
+import school.faang.user_service.dto.user.UserDto;
 import school.faang.user_service.entity.user.Skill;
 import school.faang.user_service.exception.EntityExistsException;
-import school.faang.user_service.exception.EntityNotFoundException;
 import school.faang.user_service.exception.ForbiddenException;
 import school.faang.user_service.mapper.SkillMapper;
 import school.faang.user_service.repository.recommendation.SkillOfferRepository;
 import school.faang.user_service.repository.user.SkillRepository;
+import school.faang.user_service.service.user.UserService;
+import school.faang.user_service.util.Utils;
 
 import java.util.List;
 
@@ -24,11 +25,17 @@ import java.util.List;
 public class SkillServiceImpl implements SkillService {
 
     public static final String SKILL_EXISTS = "skill.exists";
+    public static final String USER_HAS_SKILL = "user.skill.exists";
+    public static final String MIN_SKILL_OFFER = "skill.offer.min";
 
     private final SkillRepository skillRepository;
-    private final SkillMapper skillMapper;
     private final SkillOfferRepository skillOfferRepository;
-    private final MessageSource messageSource;
+    private final SkillMapper skillMapper;
+    private final UserService userService;
+    private final Utils utils;
+
+    @Value("${skill.offer.min:3}")
+    private int minSkillOffer;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,9 +48,7 @@ public class SkillServiceImpl implements SkillService {
     public SkillDto create(SkillDto skillDto) {
         log.debug("service request to save skill : {}", skillDto);
         if (skillRepository.existsByTitleIgnoreCase(skillDto.getTitle())) {
-            String message = messageSource.getMessage(
-                SKILL_EXISTS, new Object[]{skillDto.getTitle()}, LocaleContextHolder.getLocale());
-            throw new ForbiddenException(message);
+            throw new ForbiddenException(utils.getMessage(SKILL_EXISTS, skillDto.getTitle()));
         }
         Skill skill = skillMapper.toSkill(skillDto);
         Skill result = skillRepository.save(skill);
@@ -71,7 +76,7 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SkillCandidateDto> getOfferedSkills(long userId) {
+    public List<SkillCandidateDto> getOfferedSkills(Long userId) {
         List<Skill> skills = skillRepository.findSkillsOfferedToUser(userId);
         return skills.stream()
             .map(skill -> {
@@ -83,6 +88,7 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public SkillDto acquireSkillFromOffers(long skillId, long userId) {
+        userService.verifyUserIsProfileOwner(userId);
         /* todo:
          *  - проверить, что текущего навыка у пользователя ещё нет
          *  - пользователь может присвоить навык себе, если другие пользователи порекомендовали ему этот
@@ -90,19 +96,24 @@ public class SkillServiceImpl implements SkillService {
          *  - всех пользователей, которые являлись авторами рекомендаций из каждого объекта offer,
          *    назначить гарантами навыка пользователя */
         // проверить наличие пользователя в БД
-
+        UserDto user = userService.getById(userId);
         // проверить наличие навыка в БД
         Skill skillInDb = skillRepository.getByIdOrThrow(skillId);
-
 
         // проверить, что текущего навыка у пользователя ещё нет
         skillRepository.findUserSkill(skillId, userId)
             .ifPresent(skill -> {
-                throw new EntityExistsException(String.format("The user already has the skill %d", skillId));
+                throw new EntityExistsException(utils.getMessage(USER_HAS_SKILL, skillId));
             });
 
         // пользователь может присвоить навык себе, если другие пользователи порекомендовали ему этот
         // навык не менее трех раз
+        int offerCount = skillOfferRepository.countAllOffersOfSkill(skillId, userId);
+        if (offerCount < minSkillOffer) {
+            throw new ForbiddenException(utils.getMessage(MIN_SKILL_OFFER, minSkillOffer));
+        }
+
+        skillRepository.assignSkillToUser(skillId, userId);
 
         // всех пользователей, которые являлись авторами рекомендаций из каждого объекта offer,
         // назначить гарантами навыка пользователя
