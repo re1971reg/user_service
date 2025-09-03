@@ -23,9 +23,9 @@ import school.faang.user_service.util.Utils;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    public final String USER_NOT_FOUND = "user.notFound";
-    public final String PSW_LENGTH_ERROR = "password.length.error";
-    public final String USER_DONT_MATCH_PROFILE = "user.dont.match.profile";
+    public static final String USER_NOT_FOUND = "user.notFound";
+    public static final String PSW_LENGTH_ERROR = "password.length.error";
+    public static final String USER_DONT_MATCH_PROFILE = "user.dont.match.profile";
 
     @Value("${user.password.min-length:6}")
     private int minPasswordLength;

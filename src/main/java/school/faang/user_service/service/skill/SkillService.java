@@ -40,8 +40,9 @@ public interface SkillService {
 
     /**
      * Метод для приобретения предложенных навыков
+     *
      * @param skillId - идентификатор навыка
-     * @param userId - идентификатор пользователя
+     * @param userId  - идентификатор пользователя
      */
     SkillDto acquireSkillFromOffers(long skillId, long userId);
 }

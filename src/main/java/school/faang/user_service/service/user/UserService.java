@@ -40,7 +40,7 @@ public interface UserService {
      *         иначе выбрасывается {@code DataIntegrityViolationException}.</li>
      * </ul>
      *
-     * @param userId идентификатор пользователя, чьи данные необходимо обновить
+     * @param userId  идентификатор пользователя, чьи данные необходимо обновить
      * @param userDto объект {@link UpdateUserDto}, содержащий обновлённые данные пользователя
      * @return объект {@link UserDto}, представляющий обновлённого пользователя
      */
@@ -59,6 +59,7 @@ public interface UserService {
 
     /**
      * Возвращает User по его идентификатору
+     *
      * @param userId - идентификатор пользователя
      * @return {@link UserDto} данные о пользователе
      */
@@ -66,6 +67,7 @@ public interface UserService {
 
     /**
      * Проверка, что текущий пользователь является владельцем профиля
+     *
      * @param userId - идентификатор пользователя
      */
     void verifyUserIsProfileOwner(Long userId);
