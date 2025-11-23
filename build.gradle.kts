@@ -126,8 +126,6 @@ tasks.checkstyleTest {
 
 jacoco {
     toolVersion = "0.8.13"
-    //reportsDirectory = layout.buildDirectory.dir("${buildDir}/reports/jacoco")
-    //reportsDirectory = layout.buildDirectory.dir("${project.buildDir}/reports/jacoco")
     reportsDirectory = layout.buildDirectory.dir("${layout.buildDirectory.asFile.get()}/reports/jacoco")
     println("${layout.buildDirectory.asFile.get()}/reports/jacoco")
 }
@@ -152,6 +150,7 @@ tasks.jacocoTestReport {
                 //"school/faang/user_service/repository/*",
                 //"school/faang/user_service/exception/*",
                 //"school/faang/user_service/rest/*",
+                //
                 "com/json/student/*"
             )
         }
