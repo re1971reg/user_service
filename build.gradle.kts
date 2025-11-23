@@ -56,8 +56,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
-
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0")
 
     /**
@@ -75,6 +73,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    /**
+     * swagger
+     * пример настройки https://struchkov.dev/blog/ru/api-swagger/#настраиваем-swagger
+     */
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 }
 
 //jsonSchema2Pojo {
@@ -89,7 +93,9 @@ tasks.withType<Test> {
     finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
 }
 
-val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true }
+val test by tasks.getting(Test::class) {
+    testLogging.showStandardStreams = true
+}
 
 tasks.bootJar {
     archiveFileName.set("service.jar")
@@ -116,6 +122,14 @@ tasks.checkstyleTest {
     source = fileTree("${project.rootDir}/src/test")
     include("**/*.java")
     classpath = files()
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+    //reportsDirectory = layout.buildDirectory.dir("${buildDir}/reports/jacoco")
+    //reportsDirectory = layout.buildDirectory.dir("${project.buildDir}/reports/jacoco")
+    reportsDirectory = layout.buildDirectory.dir("${layout.buildDirectory.asFile.get()}/reports/jacoco")
+    println("${layout.buildDirectory.asFile.get()}/reports/jacoco")
 }
 
 tasks.jacocoTestReport {
