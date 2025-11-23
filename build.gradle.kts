@@ -150,6 +150,7 @@ tasks.jacocoTestReport {
                 //"school/faang/user_service/repository/*",
                 //"school/faang/user_service/exception/*",
                 //"school/faang/user_service/rest/*",
+                //
                 "com/json/student/*"
             )
         }
