@@ -24,6 +24,10 @@ public class Utils {
         return new FormattedMessage(messagePattern, args).getFormattedMessage();
     }
 
+    public String getMessage(final String code) {
+        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+    }
+
     public String getMessage(final String code, final Object arg) {
         String message = messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
         return format(message, arg);

@@ -93,7 +93,9 @@ tasks.withType<Test> {
     finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
 }
 
-val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true }
+val test by tasks.getting(Test::class) {
+    testLogging.showStandardStreams = true
+}
 
 tasks.bootJar {
     archiveFileName.set("service.jar")
@@ -124,7 +126,10 @@ tasks.checkstyleTest {
 
 jacoco {
     toolVersion = "0.8.13"
-    reportsDirectory = layout.buildDirectory.dir("$buildDir/reports/jacoco")
+    //reportsDirectory = layout.buildDirectory.dir("${buildDir}/reports/jacoco")
+    //reportsDirectory = layout.buildDirectory.dir("${project.buildDir}/reports/jacoco")
+    reportsDirectory = layout.buildDirectory.dir("${layout.buildDirectory.asFile.get()}/reports/jacoco")
+    println("${layout.buildDirectory.asFile.get()}/reports/jacoco")
 }
 
 tasks.jacocoTestReport {

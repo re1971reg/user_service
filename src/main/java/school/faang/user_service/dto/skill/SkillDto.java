@@ -28,3 +28,4 @@ public class SkillDto {
     @Schema(description = "Рекомендатели навыка")
     private List<UserDto> guarantors;
 }
+

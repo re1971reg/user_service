@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long userId, UpdateUserDto userDto) {
         verifyUserIsProfileOwner(userId);
         User user = getByIdOrThrow(userId);
-        userMapper.update(userDto, user);
+        userMapper.updateFromDto(userDto, user);
         Country country = countryRepository.getByIdOrThrow(userDto.countryId());
         user.setCountry(country);
         user = userRepository.save(user);
